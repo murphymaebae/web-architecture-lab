@@ -1,0 +1,13 @@
+{
+  "name": "@lab/content",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A tiny stand-in for a headless CMS: a structured content model, sample content and a swappable client.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@lab/domain": "*"
+  }
+}
