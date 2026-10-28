@@ -15,7 +15,7 @@
     "start": "npm run start -w web",
     "lint": "npm run lint -w web && npm run lint -w mobile",
     "typecheck": "npm run typecheck -w web && npm run typecheck -w mobile && tsc -p services/tsconfig.json",
-    "test": "npm run test -w @lab/journey-service"
+    "test": "npm run test -w @lab/journey-service && npm run test -w web"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",
