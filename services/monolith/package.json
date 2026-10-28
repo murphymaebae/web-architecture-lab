@@ -1,0 +1,17 @@
+{
+  "name": "@lab/monolith",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@lab/accounts-service": "*",
+    "@lab/catalog-service": "*",
+    "@lab/content-service": "*",
+    "@lab/orders-service": "*",
+    "@lab/service-kit": "*"
+  }
+}

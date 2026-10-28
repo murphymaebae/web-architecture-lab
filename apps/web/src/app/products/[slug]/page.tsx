@@ -6,6 +6,7 @@ import { products } from "@lab/domain";
 import { Explainer } from "@/components/Explainer";
 import { getProduct, getStock } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
+import { BuyButton } from "./BuyButton";
 
 /** Prerender every product page at build time. */
 export function generateStaticParams() {
@@ -46,6 +47,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           <Suspense fallback={<p className="h-6 w-40 animate-pulse rounded bg-zinc-100 dark:bg-zinc-900" />}>
             <LiveStock productId={product.id} />
           </Suspense>
+          <BuyButton productId={product.id} />
           <p className="text-xs text-zinc-500">Tags: {product.tags.join(", ")}</p>
         </div>
       </div>

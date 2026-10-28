@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:monolith": "cross-env LAB_DATA_SOURCE=graphql LAB_TOPOLOGY=monolith next dev",
+    "dev:micro": "cross-env LAB_DATA_SOURCE=graphql LAB_TOPOLOGY=microservices next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -22,6 +24,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",

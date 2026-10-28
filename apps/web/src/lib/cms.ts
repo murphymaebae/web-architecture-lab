@@ -4,7 +4,12 @@
 import "server-only";
 
 import { cacheLife, cacheTag } from "next/cache";
-import { contentSource } from "@lab/content";
+import { contentSource as localContentSource, type ContentSource } from "@lab/content";
+import { DATA_SOURCE } from "./data-source";
+import { GraphQLContentSource } from "./content-graphql";
+
+/** Pick the CMS adapter: in-repo content, or the content service via GraphQL. */
+const contentSource: ContentSource = DATA_SOURCE === "graphql" ? new GraphQLContentSource() : localContentSource;
 
 export async function getCmsPage(slug: string, preview: boolean) {
   "use cache";

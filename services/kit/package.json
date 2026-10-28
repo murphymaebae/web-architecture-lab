@@ -1,0 +1,17 @@
+{
+  "name": "@lab/service-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Small helpers shared by every backend service: context, logging, starting a server.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.5.1",
+    "@apollo/subgraph": "^2.15.1",
+    "@lab/domain": "*",
+    "graphql": "^16.11.0",
+    "graphql-tag": "^2.12.7"
+  }
+}
