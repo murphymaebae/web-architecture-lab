@@ -47,4 +47,6 @@ export type Order = {
 
 // Every place a customer can interact with the brand is a "channel".
 // Omni-channel means giving people one joined-up experience across all of them.
-export type Channel = "web" | "mobile" | "email" | "store";
+// "push" means mobile push notifications, which behave differently from the
+// app itself (they reach people when the app is closed).
+export type Channel = "web" | "mobile" | "email" | "push" | "store";

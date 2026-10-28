@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PageViewTracker } from "@/components/Track";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,6 +19,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
         <SiteHeader />
+        {/* Sends a page_view event on every navigation (renders nothing). */}
+        <Suspense fallback={null}>
+          <PageViewTracker />
+        </Suspense>
         <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-10">
           {children}
         </main>

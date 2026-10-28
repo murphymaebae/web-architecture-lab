@@ -6,6 +6,7 @@ import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { Explainer } from "@/components/Explainer";
 import { PageHeading } from "@/components/PageHeading";
 import { SegmentSwitcher, SegmentSwitcherSkeleton } from "@/components/SegmentSwitcher";
+import { Track } from "@/components/Track";
 import { getCmsPage } from "@/lib/cms";
 import { formatDate } from "@/lib/format";
 import { getSegment } from "@/lib/segment";
@@ -48,6 +49,7 @@ export default function CampaignPage() {
         <SegmentSwitcher />
       </Suspense>
 
+      <Track event={{ type: "campaign_view" }} />
       <hr className="border-zinc-200 dark:border-zinc-800" />
 
       <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-900" />}>

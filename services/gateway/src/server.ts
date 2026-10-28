@@ -20,6 +20,7 @@ const services = [
   { name: "accounts", url: process.env.ACCOUNTS_URL ?? "http://localhost:4002/" },
   { name: "orders", url: process.env.ORDERS_URL ?? "http://localhost:4003/" },
   { name: "content", url: process.env.CONTENT_URL ?? "http://localhost:4004/" },
+  { name: "journey", url: process.env.JOURNEY_URL ?? "http://localhost:4005/" },
 ];
 
 type GatewayContext = { headers: Record<string, string> };

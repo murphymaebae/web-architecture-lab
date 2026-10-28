@@ -74,6 +74,16 @@ export const ordersModule: ServiceModule = {
           lines: [{ productId: product.id, quantity: args.quantity, unitPrice: product.price }],
         };
         orders.push(order);
+        // Step 3: tell anyone who cares (the journey service) what happened.
+        // We don't wait for them; that's the point of events.
+        context.events.publish({
+          type: "order_placed",
+          channel: context.channel,
+          userId: context.userId,
+          anonymousId: context.anonymousId,
+          productId: product.id,
+          tags: product.tags,
+        });
         return order;
       },
     },

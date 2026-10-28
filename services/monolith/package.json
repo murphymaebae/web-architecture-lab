@@ -11,6 +11,7 @@
     "@lab/accounts-service": "*",
     "@lab/catalog-service": "*",
     "@lab/content-service": "*",
+    "@lab/journey-service": "*",
     "@lab/orders-service": "*",
     "@lab/service-kit": "*"
   }

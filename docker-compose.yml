@@ -31,12 +31,18 @@ services:
     command: ["npx", "tsx", "services/orders/src/server.ts"]
     environment:
       CATALOG_URL: http://catalog:4001/
+      JOURNEY_URL: http://journey:4005/
     ports: ["4003:4003"]
 
   content:
     <<: *backend
     command: ["npx", "tsx", "services/content/src/server.ts"]
     ports: ["4004:4004"]
+
+  journey:
+    <<: *backend
+    command: ["npx", "tsx", "services/journey/src/server.ts"]
+    ports: ["4005:4005"]
 
   gateway:
     <<: *backend
@@ -46,8 +52,9 @@ services:
       ACCOUNTS_URL: http://accounts:4002/
       ORDERS_URL: http://orders:4003/
       CONTENT_URL: http://content:4004/
+      JOURNEY_URL: http://journey:4005/
     ports: ["4000:4000"]
-    depends_on: [catalog, accounts, orders, content]
+    depends_on: [catalog, accounts, orders, content, journey]
 
   # Alternative: the monolith. Start it on its own with
   #   docker compose --profile monolith up --build monolith

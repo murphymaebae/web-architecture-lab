@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { cacheLife, cacheTag } from "next/cache";
 import { products } from "@lab/domain";
 import { Explainer } from "@/components/Explainer";
+import { NextBestAction } from "@/components/NextBestAction";
+import { Track } from "@/components/Track";
 import { getProduct, getStock } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { BuyButton } from "./BuyButton";
@@ -33,6 +35,8 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
 
   return (
     <>
+      {/* Tell the journey service this product was viewed (step 3). */}
+      <Track event={{ type: "product_view", productId: product.id, tags: product.tags }} />
       <Link href="/products" className="text-sm text-zinc-500">
         ← All products
       </Link>
@@ -51,6 +55,9 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           <p className="text-xs text-zinc-500">Tags: {product.tags.join(", ")}</p>
         </div>
       </div>
+      <Suspense fallback={null}>
+        <NextBestAction />
+      </Suspense>
       <Explainer title="How this product page is built">
         <p>
           A very common commerce pattern. Name, price, picture and description change rarely, so

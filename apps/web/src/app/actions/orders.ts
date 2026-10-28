@@ -3,7 +3,7 @@
 import { updateTag } from "next/cache";
 import { DATA_SOURCE } from "@/lib/data-source";
 import { GraphQLRequestError, graphqlRequest } from "@/lib/graphql";
-import { getUserId } from "@/lib/user";
+import { getVisitorIds } from "@/lib/visitor";
 
 export type BuyState =
   | { status: "idle" }
@@ -20,7 +20,7 @@ export async function buyProduct(_previous: BuyState, formData: FormData): Promi
   if (DATA_SOURCE !== "graphql") {
     return { status: "error", message: "Ordering needs the backend. Run `npm run dev` from the repo root." };
   }
-  const userId = await getUserId();
+  const { userId, anonymousId } = await getVisitorIds();
   if (!userId) return { status: "error", message: "Pick a demo user on the Account page first." };
 
   const productId = String(formData.get("productId"));
@@ -28,7 +28,9 @@ export async function buyProduct(_previous: BuyState, formData: FormData): Promi
     const data = await graphqlRequest<{ placeOrder: { id: string; total: number } }>(
       `mutation PlaceOrder($productId: ID!) { placeOrder(productId: $productId, quantity: 1) { id total } }`,
       { productId },
-      { userId },
+      // The anonymous id travels too, so the journey service can link this
+      // order to what the visitor browsed before signing in.
+      { userId, anonymousId },
     );
     // Product data (stock) changed, so throw away cached copies.
     updateTag("products");

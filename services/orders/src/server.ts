@@ -4,10 +4,18 @@
 // (service-to-service), not through the gateway. That keeps internal
 // operations off the public API.
 
-import { businessError, portFromEnv, remoteRefs, startService, type InventoryPort } from "@lab/service-kit";
+import {
+  businessError,
+  httpEventPublisher,
+  portFromEnv,
+  remoteRefs,
+  startService,
+  type InventoryPort,
+} from "@lab/service-kit";
 import { ordersFederationStubs, ordersModule } from "./module";
 
 const CATALOG_URL = process.env.CATALOG_URL ?? "http://localhost:4001/";
+const JOURNEY_URL = process.env.JOURNEY_URL ?? "http://localhost:4005/";
 
 const httpInventory: InventoryPort = {
   async reserve(productId, quantity) {
@@ -16,14 +24,14 @@ const httpInventory: InventoryPort = {
       headers: { "content-type": "application/json", "x-channel": "web" },
       body: JSON.stringify({
         query: `mutation Reserve($productId: ID!, $quantity: Int!) {
-          reserveStock(productId: $productId, quantity: $quantity) { id name price }
+          reserveStock(productId: $productId, quantity: $quantity) { id name price tags }
         }`,
         operationName: "Reserve",
         variables: { productId, quantity },
       }),
     });
     const body = (await res.json()) as {
-      data?: { reserveStock: { id: string; name: string; price: number } };
+      data?: { reserveStock: { id: string; name: string; price: number; tags: string[] } };
       errors?: { message: string; extensions?: { code?: string } }[];
     };
     // Pass the catalog's error on to our caller, keeping its code.
@@ -40,4 +48,5 @@ await startService({
   topology: "microservices",
   refs: remoteRefs,
   inventory: httpInventory,
+  events: httpEventPublisher(JOURNEY_URL),
 });
