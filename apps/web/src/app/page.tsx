@@ -5,6 +5,11 @@ import { PageHeading } from "@/components/PageHeading";
 
 const experiments = [
   {
+    href: "/playground",
+    title: "Architecture playground",
+    body: "Drag boxes, wire up an architecture, push traffic through it and break things. Watch latency, errors and cost react live.",
+  },
+  {
     href: "/rendering",
     title: "Rendering strategies",
     body: "The same product list rendered six ways: static, cached (ISR), dynamic (SSR), streaming, client-side (CSR) and partial prerendering.",

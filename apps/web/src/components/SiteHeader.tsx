@@ -7,6 +7,7 @@ const links = [
   { href: "/architecture", label: "Architecture" },
   { href: "/journey", label: "Journey" },
   { href: "/account", label: "Account" },
+  { href: "/playground", label: "Playground" },
 ];
 
 /** The top navigation bar. It has no data or runtime APIs, so Next.js

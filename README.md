@@ -43,6 +43,10 @@ The work is split into four steps. Each step comes with a learning guide in
 4. **Omni-channel** - a React Native (Expo) app on the same backend, and a comparison write-up.
    [Guide](docs/learning/04-omnichannel.md)
 
+Plus an **architecture playground** at `/playground`: drag boxes, wire up an
+architecture, send traffic through it and break things, with live latency,
+errors and cost. [Guide](docs/learning/05-playground.md)
+
 ## Repository layout
 
 ```
