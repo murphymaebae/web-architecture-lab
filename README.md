@@ -23,6 +23,7 @@ Then open http://localhost:3000.
 | `npm run dev` | Monolith API + website |
 | `npm run dev:micro` | Five microservices + GraphQL gateway + website |
 | `npm run dev:web` | Website only, using in-repo sample data |
+| `npm run dev:mobile` | Expo dev server for the mobile app (run `npm run dev` too). Press `w` for a browser, or scan the QR code with Expo Go |
 | `docker compose up --build` | Microservices + gateway in containers (then `npm run dev:micro -w web`) |
 | `npm run build && npm run start` | Production build of the website (sample data) |
 | `npm test` | Unit tests (journey engine) |
@@ -39,12 +40,14 @@ The work is split into four steps. Each step comes with a learning guide in
    [Guide](docs/learning/02-backend-graphql.md)
 3. **Journey management** - event tracking, identity resolution and "next best action" personalization.
    [Guide](docs/learning/03-journeys.md)
-4. **Omni-channel** - a React Native (Expo) app on the same backend, and a comparison write-up
+4. **Omni-channel** - a React Native (Expo) app on the same backend, and a comparison write-up.
+   [Guide](docs/learning/04-omnichannel.md)
 
 ## Repository layout
 
 ```
 apps/web            Next.js website
+apps/mobile         Expo (React Native) app: iOS, Android and browser
 packages/domain     Shared business types and sample data
 packages/content    Headless-CMS stand-in: content model, entries and client
 services/kit        Shared backend plumbing (context, logging, server start-up)

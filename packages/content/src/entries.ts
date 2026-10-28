@@ -71,6 +71,13 @@ export const publishedPages: Page[] = [
           "This paragraph only appears on the website. On the mobile app the same page leaves it out, because long text works poorly on small screens.",
         ],
       },
+      {
+        id: "b9",
+        type: "promoBanner",
+        tone: "info",
+        channels: ["mobile"],
+        text: "App exclusive: scan any item in store to see reviews and stock.",
+      },
     ],
   },
 ];
