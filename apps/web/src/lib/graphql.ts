@@ -28,7 +28,7 @@ type GraphQLResponse<T> = {
 export async function graphqlRequest<T>(
   query: string,
   variables: Record<string, unknown> = {},
-  options: { userId?: string; channel?: Channel } = {},
+  options: { userId?: string; anonymousId?: string; channel?: Channel } = {},
 ): Promise<T> {
   // The operation name ("query Products ...") shows up in the service logs.
   const operationName = /^\s*(?:query|mutation)\s+(\w+)/.exec(query)?.[1];
@@ -41,6 +41,7 @@ export async function graphqlRequest<T>(
         "content-type": "application/json",
         "x-channel": options.channel ?? "web",
         ...(options.userId ? { "x-user-id": options.userId } : {}),
+        ...(options.anonymousId ? { "x-anonymous-id": options.anonymousId } : {}),
       },
       body: JSON.stringify({ query, variables, operationName }),
     });

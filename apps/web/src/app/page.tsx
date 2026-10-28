@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import Link from "next/link";
+import { NextBestAction } from "@/components/NextBestAction";
 import { PageHeading } from "@/components/PageHeading";
 
 const experiments = [
@@ -17,6 +19,21 @@ const experiments = [
     title: "Product catalog",
     body: "A typical commerce pattern: static product pages generated at build time, with live stock streamed in per request.",
   },
+  {
+    href: "/architecture",
+    title: "Monolith vs microservices",
+    body: "The same GraphQL backend running as one process or as several services behind a federation gateway.",
+  },
+  {
+    href: "/account",
+    title: "Account",
+    body: "Sign in as a demo customer and see one GraphQL query answered by several services.",
+  },
+  {
+    href: "/journey",
+    title: "Journey inspector",
+    body: "Event tracking, identity resolution, segments and customer journeys that decide what you see next.",
+  },
 ];
 
 export default function Home() {
@@ -28,6 +45,11 @@ export default function Home() {
           explains what it is doing, so open the <em>How this works</em> boxes as you go.
         </p>
       </PageHeading>
+
+      {/* Personalised by the journey service (step 3). Empty without the backend. */}
+      <Suspense fallback={null}>
+        <NextBestAction />
+      </Suspense>
 
       <section className="grid gap-4 sm:grid-cols-3">
         {experiments.map((e) => (

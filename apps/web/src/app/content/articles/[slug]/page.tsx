@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Track } from "@/components/Track";
 import { getCmsArticle, getCmsArticles } from "@/lib/cms";
 import { formatDate } from "@/lib/format";
 
@@ -25,6 +26,7 @@ export default async function ArticlePage({ params }: PageProps<"/content/articl
 
   return (
     <article className="flex max-w-2xl flex-col gap-4">
+      <Track event={{ type: "article_view", tags: article.tags }} />
       <Link href="/content/articles" className="text-sm text-zinc-500">
         ← All articles
       </Link>

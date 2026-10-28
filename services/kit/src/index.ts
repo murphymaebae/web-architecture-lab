@@ -38,17 +38,40 @@ export interface EntityRefs {
 /** The orders service needs to reserve stock, which the catalog service owns.
  * This "port" says WHAT it needs; each topology plugs in HOW. */
 export interface InventoryPort {
-  reserve(productId: string, quantity: number): Promise<{ id: string; name: string; price: number }>;
+  reserve(productId: string, quantity: number): Promise<{ id: string; name: string; price: number; tags: string[] }>;
+}
+
+/** Something that happened, announced so other services can react.
+ * Enterprises send these over a message broker (Kafka, RabbitMQ, AWS
+ * EventBridge, Azure Service Bus). Past tense names are the convention. */
+export type DomainEvent = {
+  type: string; // e.g. "order_placed"
+  channel: Channel;
+  userId?: string;
+  anonymousId?: string;
+  productId?: string;
+  tags?: string[];
+  path?: string;
+};
+
+/** How a service announces events. Like InventoryPort, each topology plugs in
+ * its own implementation: in-process in the monolith, HTTP between services. */
+export interface EventPublisher {
+  publish(event: DomainEvent): void;
 }
 
 export type LabContext = {
   /** The signed-in demo user, from the `x-user-id` header. */
   userId?: string;
+  /** A random id the website/app gives each visitor before they sign in,
+   * from the `x-anonymous-id` header. */
+  anonymousId?: string;
   /** Which channel the request came from, from the `x-channel` header. */
   channel: Channel;
   topology: Topology;
   refs: EntityRefs;
   inventory: InventoryPort;
+  events: EventPublisher;
 };
 
 export type ServiceModule = {
@@ -67,7 +90,7 @@ export function buildSchema(modules: ServiceModule[]) {
   return buildSubgraphSchema([federationLink, ...modules]);
 }
 
-const CHANNELS: Channel[] = ["web", "mobile", "email", "store"];
+const CHANNELS: Channel[] = ["web", "mobile", "email", "push", "store"];
 
 /** Turn incoming HTTP headers into the parts of the context they control. */
 export function contextFromHeaders(headers: Record<string, string | string[] | undefined>) {
@@ -78,6 +101,7 @@ export function contextFromHeaders(headers: Record<string, string | string[] | u
   const channel = header("x-channel") as Channel | undefined;
   return {
     userId: header("x-user-id") || undefined,
+    anonymousId: header("x-anonymous-id") || undefined,
     channel: channel && CHANNELS.includes(channel) ? channel : ("web" as Channel),
   };
 }
@@ -109,6 +133,7 @@ export async function startService(options: {
   topology: Topology;
   refs: EntityRefs;
   inventory: InventoryPort;
+  events?: EventPublisher;
 }) {
   const server = new ApolloServer<LabContext>({
     schema: buildSchema(options.modules),
@@ -121,6 +146,7 @@ export async function startService(options: {
       topology: options.topology,
       refs: options.refs,
       inventory: options.inventory,
+      events: options.events ?? noEvents,
     }),
   });
   console.log(`${options.name} ready at ${url} (${options.topology})`);
@@ -141,6 +167,34 @@ export const noInventory: InventoryPort = {
     throw new Error("This service cannot reserve stock");
   },
 };
+
+/** An EventPublisher that drops events. For services that publish nothing. */
+export const noEvents: EventPublisher = { publish: () => {} };
+
+/** Publishes events by POSTing them to the journey service. "Fire and
+ * forget": the caller doesn't wait, and a failure is only logged, so a
+ * journey outage never blocks someone from placing an order. A real broker
+ * would also retry and keep events safe while the journey service is down. */
+export function httpEventPublisher(journeyUrl: string): EventPublisher {
+  return {
+    publish(event) {
+      fetch(journeyUrl, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-channel": event.channel,
+          ...(event.userId ? { "x-user-id": event.userId } : {}),
+          ...(event.anonymousId ? { "x-anonymous-id": event.anonymousId } : {}),
+        },
+        body: JSON.stringify({
+          operationName: "IngestEvent",
+          query: `mutation IngestEvent($input: TrackEventInput!) { trackEvent(input: $input) { id } }`,
+          variables: { input: { type: event.type, productId: event.productId, tags: event.tags, path: event.path } },
+        }),
+      }).catch((error: Error) => console.warn(`could not publish ${event.type}: ${error.message}`));
+    },
+  };
+}
 
 /** Read a port number from an environment variable, with a default. */
 export function portFromEnv(name: string, fallback: number): number {

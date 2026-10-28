@@ -17,6 +17,7 @@ COPY services/catalog/package.json services/catalog/
 COPY services/accounts/package.json services/accounts/
 COPY services/orders/package.json services/orders/
 COPY services/content/package.json services/content/
+COPY services/journey/package.json services/journey/
 COPY services/gateway/package.json services/gateway/
 COPY services/monolith/package.json services/monolith/
 RUN npm ci --ignore-scripts --no-audit --no-fund

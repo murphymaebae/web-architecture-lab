@@ -11,7 +11,7 @@ import { getUserId } from "@/lib/user";
 
 export const metadata = { title: "Account" };
 
-// ONE query, answered by THREE services. The comments show who owns what.
+// ONE query, answered by FOUR services. The comments show who owns what.
 const ME_QUERY = `query AccountPage {
   me {                 # accounts service
     name
@@ -32,6 +32,10 @@ const ME_QUERY = `query AccountPage {
         }
       }
     }
+    profile {          # journey service (adds "profile" to User)
+      segment
+      journeys { journeyName stateLabel }
+    }
   }
 }`;
 
@@ -47,6 +51,7 @@ type MeResult = {
       total: number;
       lines: { quantity: number; unitPrice: number; product: { name: string; emoji: string; slug: string } }[];
     }[];
+    profile: { segment: string; journeys: { journeyName: string; stateLabel: string }[] } | null;
   } | null;
 };
 
@@ -62,8 +67,9 @@ export default function AccountPage() {
           This page sends <strong>one</strong> request to the GraphQL API on port 4000 (the query is
           shown below). In the <strong>monolith</strong>, one process answers all of it. In{" "}
           <strong>microservices</strong> mode, the gateway splits it into a <em>query plan</em>:
-          ask <code>accounts</code> for the user, then <code>orders</code> for their orders, then{" "}
-          <code>catalog</code> for each product&apos;s name, and merges the answers.
+          ask <code>accounts</code> for the user, then <code>orders</code> for their orders and{" "}
+          <code>journey</code> for their profile, then <code>catalog</code> for each product&apos;s
+          name, and merges the answers.
         </p>
         <p>
           That is the main promise of GraphQL Federation for enterprises: each team owns its own
@@ -125,8 +131,15 @@ async function AccountContent() {
         <div>
           <p className="text-lg font-semibold">{me.name}</p>
           <p className="text-sm text-zinc-500">
-            {me.email} · segment <code>{me.segment}</code>
+            {me.email} · CRM segment <code>{me.segment}</code>
           </p>
+          {me.profile && (
+            <p className="text-sm text-zinc-500">
+              Behavioural segment <code>{me.profile.segment}</code> ·{" "}
+              {me.profile.journeys.map((j) => `${j.journeyName}: ${j.stateLabel}`).join(" · ")}{" "}
+              <Link href="/journey" className="underline">details</Link>
+            </p>
+          )}
         </div>
         <form action={signOut}>
           <button className="text-sm text-zinc-500 underline">Sign out</button>

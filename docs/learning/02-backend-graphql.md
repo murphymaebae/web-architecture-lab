@@ -9,7 +9,7 @@ and microservices. Code lives in `services/`.
 | Command (from repo root) | What starts | Website reads data from |
 | --- | --- | --- |
 | `npm run dev` | Monolith on :4000 + website on :3000 | GraphQL (monolith) |
-| `npm run dev:micro` | 4 services (:4001-4004) + gateway (:4000) + website | GraphQL (gateway) |
+| `npm run dev:micro` | Services (:4001-4005) + gateway (:4000) + website | GraphQL (gateway) |
 | `npm run dev:web` | Website only | In-repo sample data |
 
 Then open http://localhost:3000/architecture to see which topology is running,

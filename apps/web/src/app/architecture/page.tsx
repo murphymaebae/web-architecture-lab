@@ -12,6 +12,7 @@ const services = [
   { name: "accounts", url: process.env.ACCOUNTS_URL ?? "http://localhost:4002/", port: 4002 },
   { name: "orders", url: process.env.ORDERS_URL ?? "http://localhost:4003/", port: 4003 },
   { name: "content", url: process.env.CONTENT_URL ?? "http://localhost:4004/", port: 4004 },
+  { name: "journey", url: process.env.JOURNEY_URL ?? "http://localhost:4005/", port: 4005 },
 ];
 
 const comparison = [
@@ -29,7 +30,7 @@ export default function ArchitecturePage() {
     <>
       <PageHeading title="Architecture: monolith vs microservices">
         <p>
-          The same backend code can run as one process or as five. This page shows which one is
+          The same backend code can run as one process or as six. This page shows which one is
           running right now.
         </p>
       </PageHeading>
@@ -41,7 +42,7 @@ export default function ArchitecturePage() {
           title="Monolith"
           command="npm run dev"
           active={TOPOLOGY === "monolith"}
-          boxes={[["API :4000", ["catalog", "accounts", "orders", "content"]]]}
+          boxes={[["API :4000", ["catalog", "accounts", "orders", "content", "journey"]]]}
         />
         <Diagram
           title="Microservices + gateway"
@@ -53,6 +54,7 @@ export default function ArchitecturePage() {
             ["accounts :4002", []],
             ["orders :4003", []],
             ["content :4004", []],
+            ["journey :4005", []],
           ]}
         />
       </div>
@@ -120,7 +122,7 @@ function ModeBanner() {
       ? "The site is reading sample data directly (no backend). Run `npm run dev` or `npm run dev:micro` to use the GraphQL backend."
       : TOPOLOGY === "monolith"
         ? "The site is talking to the MONOLITH on port 4000."
-        : "The site is talking to the GATEWAY on port 4000, which fans out to four services.";
+        : "The site is talking to the GATEWAY on port 4000, which fans out to five services.";
   return <p className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-100">{text}</p>;
 }
 
@@ -173,7 +175,7 @@ async function HealthTable() {
   await connection(); // always check live, never cache
   const results = await Promise.all(services.map(checkService));
   return (
-    <ul className="grid gap-2 sm:grid-cols-5">
+    <ul className="grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
       {results.map((r) => (
         <li key={r.port} className="rounded-lg border border-zinc-200 p-3 text-sm dark:border-zinc-800">
           <div className="font-medium">{r.name}</div>
