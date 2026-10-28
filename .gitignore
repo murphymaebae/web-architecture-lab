@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+build/
+.expo/
+web-build/
+
+# Logs and OS files
+*.log
+.DS_Store
+
+# Local environment files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
