@@ -30,7 +30,7 @@ packages/
 docs/learning/        These guides
 ```
 
-Later steps add `services/` (backend microservices) and `apps/mobile`.
+Step 2 adds `services/` (the GraphQL backend). Step 4 adds `apps/mobile`.
 
 Inside `apps/web/src`:
 
@@ -52,7 +52,7 @@ You need Node.js 20 or newer (`node -v` to check). Then, from the repo root:
 
 ```bash
 npm install          # download all libraries (first time only)
-npm run dev          # start the website in development mode
+npm run dev          # start the API and the website in development mode
 ```
 
 Open http://localhost:3000. Edit any file under `apps/web/src` and the browser

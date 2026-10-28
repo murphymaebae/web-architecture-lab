@@ -1,0 +1,57 @@
+# The microservices topology in containers.
+#
+#   docker compose up --build        start everything
+#   npm run dev:micro -w web         then start the website against it
+#
+# Inside the Docker network, services find each other by NAME
+# (http://catalog:4001), which is how service discovery works in Docker and
+# Kubernetes. Only the gateway needs to be reachable from your machine, but
+# every port is published so the Architecture page can check them.
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: Dockerfile.backend
+  image: web-architecture-lab/backend
+  restart: unless-stopped
+
+services:
+  catalog:
+    <<: *backend
+    command: ["npx", "tsx", "services/catalog/src/server.ts"]
+    ports: ["4001:4001"]
+
+  accounts:
+    <<: *backend
+    command: ["npx", "tsx", "services/accounts/src/server.ts"]
+    ports: ["4002:4002"]
+
+  orders:
+    <<: *backend
+    command: ["npx", "tsx", "services/orders/src/server.ts"]
+    environment:
+      CATALOG_URL: http://catalog:4001/
+    ports: ["4003:4003"]
+
+  content:
+    <<: *backend
+    command: ["npx", "tsx", "services/content/src/server.ts"]
+    ports: ["4004:4004"]
+
+  gateway:
+    <<: *backend
+    command: ["npx", "tsx", "services/gateway/src/server.ts"]
+    environment:
+      CATALOG_URL: http://catalog:4001/
+      ACCOUNTS_URL: http://accounts:4002/
+      ORDERS_URL: http://orders:4003/
+      CONTENT_URL: http://content:4004/
+    ports: ["4000:4000"]
+    depends_on: [catalog, accounts, orders, content]
+
+  # Alternative: the monolith. Start it on its own with
+  #   docker compose --profile monolith up --build monolith
+  monolith:
+    <<: *backend
+    profiles: ["monolith"]
+    ports: ["4000:4000"]

@@ -1,0 +1,28 @@
+# One image for every backend service. Each container picks which service to
+# run with its command (see docker-compose.yml).
+#
+# Enterprises usually build one slim image per service in CI and push it to a
+# registry. One shared image keeps this lab simple and quick to build.
+FROM node:22-alpine
+WORKDIR /app
+
+# Install dependencies first, so Docker can reuse this layer when only
+# source code changes.
+COPY package.json package-lock.json ./
+COPY apps/web/package.json apps/web/
+COPY packages/domain/package.json packages/domain/
+COPY packages/content/package.json packages/content/
+COPY services/kit/package.json services/kit/
+COPY services/catalog/package.json services/catalog/
+COPY services/accounts/package.json services/accounts/
+COPY services/orders/package.json services/orders/
+COPY services/content/package.json services/content/
+COPY services/gateway/package.json services/gateway/
+COPY services/monolith/package.json services/monolith/
+RUN npm ci --ignore-scripts --no-audit --no-fund
+
+COPY packages ./packages
+COPY services ./services
+
+ENV NODE_ENV=production
+CMD ["npx", "tsx", "services/monolith/src/server.ts"]
